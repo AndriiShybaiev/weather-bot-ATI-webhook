@@ -28,27 +28,27 @@ const cityCoordinates = {
 
 // Weather code to description mapping
 const weatherCodes = {
-    0: 'Ясно ☀️ / Despejado ☀️',
-    1: 'Облачно ☁️ / Nublado ☁️',
-    2: 'Облачно ☁️ / Nublado ☁️',
-    3: 'Облачно ☁️ / Nublado ☁️',
-    45: 'Туман 🌫️ / Niebla 🌫️',
-    48: 'Туман 🌫️ / Niebla 🌫️',
-    51: 'Дождь 🌧️ / Lluvia 🌧️',
-    53: 'Дождь 🌧️ / Lluvia 🌧️',
-    55: 'Дождь 🌧️ / Lluvia 🌧️',
-    61: 'Дождь 🌧️ / Lluvia 🌧️',
-    63: 'Дождь 🌧️ / Lluvia 🌧️',
-    65: 'Дождь 🌧️ / Lluvia 🌧️',
-    71: 'Снег 🌨️ / Nieve 🌨️',
-    73: 'Снег 🌨️ / Nieve 🌨️',
-    75: 'Снег 🌨️ / Nieve 🌨️',
-    80: 'Ливни 🌧️ / Aguaceros 🌧️',
-    81: 'Ливни 🌧️ / Aguaceros 🌧️',
-    82: 'Ливни 🌧️ / Aguaceros 🌧️',
-    95: 'Гроза ⛈️ / Tormenta ⛈️',
-    96: 'Гроза ⛈️ / Tormenta ⛈️',
-    99: 'Гроза ⛈️ / Tormenta ⛈️',
+    0: 'Despejado ☀️',
+    1: 'Nublado ☁️',
+    2: 'Nublado ☁️',
+    3: 'Nublado ☁️',
+    45: 'Niebla 🌫️',
+    48: 'Niebla 🌫️',
+    51: 'Lluvia 🌧️',
+    53: 'Lluvia 🌧️',
+    55: 'Lluvia 🌧️',
+    61: 'Lluvia 🌧️',
+    63: 'Lluvia 🌧️',
+    65: 'Lluvia 🌧️',
+    71: 'Nieve 🌨️',
+    73: 'Nieve 🌨️',
+    75: 'Nieve 🌨️',
+    80: 'Aguaceros 🌧️',
+    81: 'Aguaceros 🌧️',
+    82: 'Aguaceros 🌧️',
+    95: 'Tormenta ⛈️',
+    96: 'Tormenta ⛈️',
+    99: 'Tormenta ⛈️',
 };
 
 // Main webhook function
@@ -64,7 +64,20 @@ exports.weatherWebhook = functions.https.onRequest(async (req, res) => {
         console.log('Received request:', JSON.stringify(requestBody, null, 2));
 
         // Extract the city parameter
-        const city = requestBody?.queryResult?.parameters?.city;
+                let rawCity = requestBody?.queryResult?.parameters?.['geo-city'];
+                let city = rawCity || requestBody?.queryResult?.parameters?.city;
+
+        // Handle if city is an array (Dialogflow sends it as array)
+                if (Array.isArray(city)) {
+                    city = city[0];
+                }
+                if (Array.isArray(rawCity)) {
+                    rawCity = rawCity[0];
+                }
+
+                city = city || rawCity;
+
+
 
         if (!city) {
             return res.json({
