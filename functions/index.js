@@ -88,7 +88,8 @@ exports.weatherWebhook = functions.https.onRequest(async (req, res) => {
         }
 
         // Call Open-Meteo API
-        const apiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${coords.lat}&longitude=${coords.lon}¤t=temperature_2m,weather_code,wind_speed_10m,relative_humidity_2m&temperature_unit=celsius`;
+        const apiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${coords.lat}&longitude=${coords.lon}&current=temperature_2m&current=weather_code&current=wind_speed_10m&current=relative_humidity_2m&temperature_unit=celsius`;
+
 
         const response = await axios.get(apiUrl);
         const weatherData = response.data.current;
